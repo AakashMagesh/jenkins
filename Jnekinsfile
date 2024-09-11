@@ -1,0 +1,33 @@
+pipeline {
+    agent any
+
+    environment {
+        TARGET_DIR = '/var/www/html'
+        REMOTE_HOST = 'ec2-user@54.89.98.206' // Update with your EC2 instance details
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git url: 'https://github.com/AakashMagesh/jenkins.git'
+            }
+        }
+        
+        stage('Deploy') {
+            steps {
+                script {
+                    sh "scp -r * ${REMOTE_HOST}:${TARGET_DIR}"
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Deployment successful!'
+        }
+        failure {
+            echo 'Deployment failed!'
+        }
+    }
+}
